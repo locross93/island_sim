@@ -1,0 +1,37 @@
+places:
+  - id: beach
+    name: Sunny Beach
+    type: social
+    open: [6, 20]
+
+  - id: tavern
+    name: The Driftwood Tavern
+    type: social
+    open: [17, 24]
+
+  - id: market
+    name: Island Market
+    type: social
+    open: [8, 18]
+
+  - id: clinic
+    name: Clinic
+    type: service
+    open: [9, 17]
+
+  - id: temple
+    name: Old Stone Temple
+    type: quiet
+    open: [6, 22]
+
+  - id: work_north
+    name: North Workshop
+    type: work
+    open: [9, 17]
+
+edges:
+  - [beach, market, 2]
+  - [market, tavern, 1]
+  - [market, clinic, 1]
+  - [market, temple, 2]
+  - [market, work_north, 2]

@@ -1,0 +1,18 @@
+{
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:github.com)",
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "Bash(.venv/Scripts/python.exe:*)",
+      "Bash(.venv/Scripts/pip.exe install:*)",
+      "Bash(.venv/Scripts/streamlit.exe:*)",
+      "WebFetch(domain:localhost)",
+      "Bash(curl:*)",
+      "Bash(tasklist:*)",
+      "Bash(tasklist /FI \"IMAGENAME eq python.exe\" /FI \"WINDOWTITLE eq streamlit*\")",
+      "Bash(.venv/Scripts/streamlit run ui/app.py --server.port 8501)",
+      "Bash(timeout /t 5 /nobreak)",
+      "Bash(.venv/Scripts/streamlit run ui/app.py --server.port 8501 --server.headless true)"
+    ]
+  }
+}

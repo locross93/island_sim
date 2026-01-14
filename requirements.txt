@@ -1,0 +1,7 @@
+streamlit
+pyyaml
+networkx
+pydantic
+gdm-concordia
+anthropic
+plotly
