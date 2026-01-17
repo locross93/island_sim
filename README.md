@@ -1,6 +1,10 @@
 # Island Time-and-Place Concordia Simulation
 
-A spatial, time-based multi-agent simulation where 10 LLM-powered agents live on an island. Built with Google DeepMind's Concordia framework.
+A spatial, time-based multi-agent simulation where LLM-powered agents live on an island with realistic economic inequality and social dynamics. Built with Google DeepMind's Concordia framework.
+
+**Two versions available:**
+- **Original**: 10 agents on a small island (for testing and development)
+- **100-Agent**: 100 agents with economic inequality and power law wealth distribution (realistic simulation)
 
 ## Features
 
@@ -32,12 +36,35 @@ Create `api_key.json` in the project root:
 
 ## Running
 
+### Option 1: Streamlit UI (Original 10-Agent Simulation)
+
 ```bash
 # Start the Streamlit UI
 streamlit run ui/app.py
 ```
 
 Then open http://localhost:8501 in your browser.
+
+### Option 2: 100-Agent Simulation (Command Line)
+
+Run the large-scale simulation with economic inequality:
+
+```bash
+# Run with heuristic AI (fast, no API key needed)
+python run_100_agents.py --ticks 48
+
+# Run with LLM-powered agents (requires API key)
+python run_100_agents.py --ticks 48 --use-llm --llm-provider openai
+
+# Save simulation state
+python run_100_agents.py --ticks 96 --save data/save_100.json
+
+# Load and continue simulation
+python run_100_agents.py --ticks 48 --load data/save_100.json
+
+# See all options
+python run_100_agents.py --help
+```
 
 ### LLM Mode
 
@@ -63,7 +90,46 @@ island_sim/
 └── README.md
 ```
 
-## Agents
+## 100-Agent Simulation Features
+
+The large-scale simulation introduces **economic inequality** with a realistic power law distribution:
+
+### Economic Classes
+
+- **50 agents** - Lower Middle Class (Sunset Apartments)
+  - Service workers, retail clerks, laborers
+  - Live in a modest apartment complex
+  - Work at cafes, stores, harbor, market, etc.
+
+- **25 agents** - Middle Class (Coral Village)
+  - Teachers, nurses, shop managers, craftspeople
+  - Live in small single-family homes
+  - Professional occupations and skilled trades
+
+- **15 agents** - Upper Middle Class (Palm Heights)
+  - Doctors, principals, business owners, artists
+  - Live in spacious homes with gardens
+  - Leadership and specialized professional roles
+
+- **7 agents** - Upper Class (Ocean View Estates)
+  - Specialists, wealthy investors, collectors
+  - Live in large estates with ocean views
+  - High-level positions and private investments
+
+- **3 agents** - Elite (Paradise Point Mansions)
+  - Heirs, philanthropists, tech entrepreneurs
+  - Live in palatial mansions with extensive grounds
+  - Generational wealth, minimal need to work
+
+### Expanded Island (31 Locations)
+
+**Residential Areas**: 12 locations across 5 economic tiers
+**Shared Spaces**: Beach, church, restaurant, cafe, market, town square, park, tavern, library, art gallery, gym, cemetery
+**Work/Services**: Clinic, town hall, school, harbor, workshop, general store, marina
+
+The island graph has realistic travel times creating spatial inequality - elite estates are more isolated with longer commutes to amenities.
+
+## Original 10-Agent Simulation
 
 | Name | Home | Work | Personality |
 |------|------|------|-------------|
