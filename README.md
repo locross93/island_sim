@@ -11,7 +11,10 @@ A spatial, time-based multi-agent simulation where LLM-powered agents live on an
 - **10 Unique Agents**: Each with personality, home, workplace, needs (hunger, fatigue, social), and relationships
 - **Island World**: 6 locations (beach, tavern, market, clinic, temple, workshop) connected by paths with travel times
 - **Time System**: 30-minute ticks, 48 ticks per day, with day/night cycles and open hours
-- **Concordia Integration**: Agents use EntityAgentWithLogging for memory, observations, and LLM-powered decisions
+- **Idiomatic Concordia Architecture**: Uses proper prefab patterns with Entity and Game Master prefabs
+- **Three Key Questions**: Agents reason using SituationPerception, SelfPerception, and PersonBySituation components
+- **Situated-in-Time-and-Place GM**: Game Master uses Concordia's world state, generative clock, and event resolution
+- **Multi-Simulation Support**: Scale to 100+ agents by splitting across multiple coordinated simulations
 - **Encounters**: When agents meet, the LLM generates natural dialogue based on their personalities
 - **Streamlit UI**: Real-time visualization with island map, agent panels, and comprehensive logging
 
@@ -29,12 +32,47 @@ pip install -r requirements.txt
 
 ## Configuration
 
-Create `api_key.json` in the project root:
+Set your API key as an environment variable:
+```bash
+export OPENAI_API_KEY="your-key-here"
+# or
+export ANTHROPIC_API_KEY="your-key-here"
+```
+
+Alternatively, create `api_key.json` in the project root:
 ```json
 {"API_KEY": "your-openai-api-key"}
 ```
 
 ## Running
+
+### ⭐ **NEW: Concordia Prefab Architecture** (Recommended)
+
+Run the simulation using proper Concordia prefabs and patterns:
+
+```bash
+# 10-agent simulation with Concordia prefabs
+python run_concordia.py --agents 10 --steps 10
+
+# 100-agent multi-simulation (4 neighborhood simulations, 25 agents each)
+python run_concordia.py --agents 100 --steps 5 --multi-sim --max-per-sim 25
+
+# Verbose output to see detailed logs
+python run_concordia.py --agents 10 --steps 5 --verbose
+```
+
+**Benefits:**
+- ✅ Follows official Concordia patterns
+- ✅ Uses Entity and Game Master prefabs
+- ✅ Implements three key questions reasoning
+- ✅ Supports multi-simulation coordination for 100+ agents
+- ✅ Better extensibility and component reusability
+
+See [`CONCORDIA_GUIDE.md`](CONCORDIA_GUIDE.md) for detailed documentation.
+
+---
+
+### Original Implementations
 
 ### Option 1: Streamlit UI (Original 10-Agent Simulation)
 
@@ -78,17 +116,27 @@ python run_100_agents.py --help
 ```
 island_sim/
 ├── data/
-│   └── island.yaml       # Island configuration (places, paths)
+│   ├── island.yaml          # Original 6-location island
+│   └── island_100.yaml      # Expanded 31-location island
 ├── sim/
-│   ├── world.py          # Island world model and graph
-│   ├── agents.py         # Concordia-powered agents
-│   ├── gm.py             # Game Master (movement, encounters)
-│   └── sim.py            # Main simulation controller
+│   ├── prefabs_entity.py    # ⭐ Concordia entity prefab (agents)
+│   ├── prefabs_gm.py        # ⭐ Concordia GM prefab (world management)
+│   ├── sim_concordia.py     # ⭐ Concordia simulation & multi-sim coordinator
+│   ├── world.py             # Island world model and graph
+│   ├── agents.py            # Agent configurations (10 agents)
+│   ├── agents_100.py        # Agent configurations (100 agents)
+│   ├── gm.py                # Original custom game master
+│   └── sim.py               # Original simulation controller
 ├── ui/
-│   └── app.py            # Streamlit dashboard
+│   └── app.py               # Streamlit dashboard
+├── run_concordia.py         # ⭐ Run with Concordia prefabs (RECOMMENDED)
+├── run_100_agents.py        # Run 100-agent simulation (original)
+├── CONCORDIA_GUIDE.md       # ⭐ Detailed Concordia architecture guide
 ├── requirements.txt
 └── README.md
 ```
+
+**⭐ = New Concordia prefab architecture**
 
 ## 100-Agent Simulation Features
 
@@ -144,10 +192,46 @@ The island graph has realistic travel times creating spatial inequality - elite 
 | Lily | Market | Clinic | Energetic young nurse |
 | Sol | Temple | - | Mysterious wanderer |
 
+## Architecture Comparison
+
+### Concordia Prefab Architecture (NEW) ⭐
+
+**Files:** `prefabs_entity.py`, `prefabs_gm.py`, `sim_concordia.py`, `run_concordia.py`
+
+- ✅ **Proper Concordia prefabs** - Follows official patterns from `concordia/prefabs/`
+- ✅ **Entity prefab** - "Three key questions" reasoning (SituationPerception, SelfPerception, PersonBySituation)
+- ✅ **GM prefab** - Situated-in-time-and-place pattern with GenerativeClock, Locations, WorldState
+- ✅ **Config/Role system** - Proper Concordia `Config` with `Role.ENTITY` and `Role.GAME_MASTER`
+- ✅ **Component architecture** - Modular components that can be extended or swapped
+- ✅ **Multi-simulation** - Coordinate multiple sims for 100+ agents
+- ✅ **Extensible** - Easy to add new components, thought chains, or custom behaviors
+
+**When to use:** New projects, learning Concordia, scaling to 100+ agents
+
+### Original Custom Implementation
+
+**Files:** `agents.py`, `gm.py`, `sim.py`, `run_100_agents.py`
+
+- Custom `IslandAgent` and `GameMaster` classes
+- Direct Concordia integration without prefab abstraction
+- Intent-based movement system
+- Heuristic fallback for non-LLM mode
+- Streamlit UI integration
+
+**When to use:** Existing projects, Streamlit UI, heuristic mode
+
+---
+
 ## Built With
 
 - [Concordia](https://github.com/google-deepmind/concordia) - Multi-agent simulation framework
 - [Streamlit](https://streamlit.io/) - Web UI
 - [Plotly](https://plotly.com/) - Visualization
 - [NetworkX](https://networkx.org/) - Graph algorithms
-- [OpenAI API](https://openai.com/) - LLM backend
+- [OpenAI API](https://openai.com/) / [Anthropic API](https://anthropic.com/) - LLM backends
+
+## Documentation
+
+- **[CONCORDIA_GUIDE.md](CONCORDIA_GUIDE.md)** - Comprehensive guide to the new Concordia architecture
+- **[README.md](README.md)** - This file, project overview
+- **[requirements.txt](requirements.txt)** - Python dependencies
