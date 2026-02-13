@@ -30,10 +30,24 @@ from sim.world import Island
 def create_simple_model():
     """Create a simple language model wrapper for OpenAI or Anthropic."""
     import os
+    import json
 
     # Try to get API key from environment
     openai_key = os.environ.get('OPENAI_API_KEY')
     anthropic_key = os.environ.get('ANTHROPIC_API_KEY')
+
+    # If not in environment, try api_key.json
+    if not openai_key and not anthropic_key:
+        try:
+            with open('api_key.json', 'r') as f:
+                data = json.load(f)
+                openai_key = data.get('API_KEY') or data.get('OPENAI_API_KEY')
+                if not anthropic_key:
+                    anthropic_key = data.get('ANTHROPIC_API_KEY')
+        except FileNotFoundError:
+            pass
+        except json.JSONDecodeError:
+            print("Warning: api_key.json found but could not be parsed")
 
     if openai_key:
         from openai import OpenAI
@@ -43,6 +57,10 @@ def create_simple_model():
             def __init__(self, client, model="gpt-4.1-nano"):
                 self.client = client
                 self.model = model
+
+            def sample_text(self, prompt: str, **kwargs) -> str:
+                """Concordia-compatible sample_text method."""
+                return self.__call__(prompt)
 
             def __call__(self, prompt: str) -> str:
                 response = self.client.chat.completions.create(
@@ -63,6 +81,10 @@ def create_simple_model():
                 self.client = client
                 self.model = model
 
+            def sample_text(self, prompt: str, **kwargs) -> str:
+                """Concordia-compatible sample_text method."""
+                return self.__call__(prompt)
+
             def __call__(self, prompt: str) -> str:
                 response = self.client.messages.create(
                     model=self.model,
@@ -75,7 +97,9 @@ def create_simple_model():
 
     else:
         raise ValueError(
-            "No API key found. Set OPENAI_API_KEY or ANTHROPIC_API_KEY environment variable."
+            "No API key found. Either:\n"
+            "  1. Set environment variable: OPENAI_API_KEY or ANTHROPIC_API_KEY\n"
+            "  2. Create api_key.json with: {\"API_KEY\": \"your-key-here\"}"
         )
 
 
