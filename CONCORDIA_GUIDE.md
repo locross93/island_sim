@@ -1,7 +1,31 @@
-
 # Concordia Architecture Guide
 
 This document explains the idiomatic Concordia implementation of the Island Simulation, following proper prefab patterns and component architecture.
+
+## CRITICAL: Development Policy
+
+**When working with Concordia, ALWAYS use Concordia's actual functionality.**
+
+### Do NOT:
+- Create workaround scripts that bypass Concordia's engine/GM architecture
+- Implement custom simulation loops that duplicate Concordia functionality
+- Build "lightweight" alternatives that ignore Concordia's component system
+
+### Instead, DO:
+- Use existing Concordia engines (`Sequential`, `Simultaneous`, `ParallelQuestionnaireEngine`)
+- If an engine doesn't fit your needs, **create a new Engine subclass** that extends `engine_lib.Engine`
+- Use Concordia's `concurrency.run_tasks()` for parallel execution
+- Build proper GM components using `entity_component.ContextComponent`
+- Use `AssociativeMemoryBank` for agent memory, not simple lists
+- Follow the prefab pattern for reusable entity/GM definitions
+
+### When Concordia Functionality is Insufficient:
+1. First check if there's an existing engine or component that fits
+2. If not, create a **new Concordia engine class** that extends the base
+3. Create **custom GM components** following the component interface
+4. Submit improvements upstream to Concordia if generally useful
+
+This project is maintained by Concordia contributors. We extend Concordia properly, not work around it.
 
 ## Overview
 
